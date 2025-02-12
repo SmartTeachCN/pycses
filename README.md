@@ -14,6 +14,9 @@ CSES Access Framework for Python
 
 PyCSES is a Python library that provides access to the CSES format. It is designed to be simple and easy to use.
 
+> [!Warning]
+> 由于上游 PyYaml 解析的不完善，`start_time` 和 `end_time` 可能会变为 `int` 类型，需要手动检测类型并用 `f'{int(time/60/60)}:{int(time/60%60)}:{time%60}'` 之类的方式转换回来。
+
 ## Functions
 
 ```python
@@ -57,13 +60,13 @@ generator.add_subject(name="Math", simplified_name="M", teacher="Mr. Wang", room
 generator.add_schedule(name="Monday", enable_day="mon", weeks=all, classes=[
     {
         "subject": "Math",
-        "start_time": "08:00",
-        "end_time": "09:00"
+        "start_time": "08:00:00",
+        "end_time": "09:00:00"
     },
     {
         "subject": "Biology",
-        "start_time": "09:00",
-        "end_time": "10:00"
+        "start_time": "09:00:00",
+        "end_time": "10:00:00"
     }
 ])
 
