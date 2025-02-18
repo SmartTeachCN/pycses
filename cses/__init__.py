@@ -24,7 +24,7 @@ class CSESParser:
         """加载并解析 YAML 文件"""
         try:
             with open(self.file_path,  'r', encoding='utf-8') as f:
-                self.data  = yaml.safe_load(f) 
+                self.data  = yaml.load(f, Loader=yaml.BaseLoader) 
         except FileNotFoundError:
             raise FileNotFoundError(f"File {self.file_path} Not Found")
         except yaml.YAMLError as e:
@@ -54,7 +54,7 @@ class CSESParser:
         for schedule in schedules_data:
             schedule_info = {
                 'name': schedule['name'],
-                'enable_day': schedule['enable_day'],
+                'enable_day': int(schedule['enable_day']),
                 'weeks': schedule['weeks'],
                 'classes': []
             }
