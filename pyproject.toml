@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pycses"
+version = "0.1.2"
+description = "CSES access framework for Python"
+readme = "README.md"
+requires-python = ">=3.6"
+license = {text = "MIT"}
+authors = [
+    {name = "unDefFtr", email = "contact@smart-teach.cn"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "PyYAML>=5.4.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/SmartTeachCN/pycses"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["cses*"]

@@ -54,7 +54,7 @@ generator = cses.CSESGenerator(version=1)
 generator.add_subject(name="Math", simplified_name="M", teacher="Mr. Wang", room="101")
 
 # Add a schedule
-generator.add_schedule(name="Monday", enable_day="mon", weeks=all, classes=[
+generator.add_schedule(name="Monday", enable_day="mon", weeks="all", classes=[
     {
         "subject": "Math",
         "start_time": "08:00",

@@ -5,7 +5,7 @@ PyCSES
 ======
 
 一个用于解析与生成 CSES 格式的 Python 库，提供简单易用的 API。  
-详细示例请见 [cses/__init__.py](cses/__init__.py)。
+详细示例请见源码或 README.md。
 
 安装
 ----
@@ -56,7 +56,7 @@ generator = cses.CSESGenerator(version=1)
 generator.add_subject(name="Math", simplified_name="M", teacher="Mr. Wang", room="101")
 
 # Add a schedule
-generator.add_schedule(name="Monday", enable_day="mon", weeks=all, classes=[
+generator.add_schedule(name="Monday", enable_day="mon", weeks="all", classes=[
     {
         "subject": "Math",
         "start_time": "08:00",
