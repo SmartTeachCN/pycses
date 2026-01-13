@@ -24,8 +24,10 @@ class TestCSESParser(unittest.TestCase):
             ]
         }
         
+        self.yaml_content = yaml.dump(self.test_data)
+        
         self.tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.yaml', mode='w', encoding='utf-8')
-        yaml.dump(self.test_data, self.tmp_file)
+        self.tmp_file.write(self.yaml_content)
         self.tmp_file.close()
         self.file_path = self.tmp_file.name
 
@@ -46,25 +48,35 @@ class TestCSESParser(unittest.TestCase):
         finally:
             os.remove(bad_path)
 
-    def test_parser_init(self):
-        parser = CSESParser(self.file_path)
+    def test_parser_init_file(self):
+        parser = CSESParser(file_path=self.file_path)
         self.assertEqual(parser.version, 1)
         self.assertEqual(len(parser.subjects), 2)
         self.assertEqual(len(parser.schedules), 1)
 
+    def test_parser_init_content(self):
+        parser = CSESParser(content=self.yaml_content)
+        self.assertEqual(parser.version, 1)
+        self.assertEqual(len(parser.subjects), 2)
+        self.assertEqual(len(parser.schedules), 1)
+
+    def test_parser_init_error(self):
+        with self.assertRaises(ValueError):
+            CSESParser()
+
     def test_get_subjects(self):
-        parser = CSESParser(self.file_path)
+        parser = CSESParser(content=self.yaml_content)
         subjects = parser.get_subjects()
         self.assertEqual(subjects[0]['name'], 'Math')
         self.assertEqual(subjects[1]['name'], 'English')
 
     def test_get_schedules(self):
-        parser = CSESParser(self.file_path)
+        parser = CSESParser(content=self.yaml_content)
         schedules = parser.get_schedules()
         self.assertEqual(schedules[0]['name'], 'Monday')
 
     def test_get_schedule_by_day(self):
-        parser = CSESParser(self.file_path)
+        parser = CSESParser(content=self.yaml_content)
         classes = parser.get_schedule_by_day('mon')
         self.assertEqual(len(classes), 1)
         self.assertEqual(classes[0]['subject'], 'Math')

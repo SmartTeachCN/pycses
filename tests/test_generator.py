@@ -42,5 +42,12 @@ class TestCSESGenerator(unittest.TestCase):
         finally:
             os.remove(tmp_path)
 
+    def test_to_string(self):
+        self.generator.add_subject("Math")
+        yaml_str = self.generator.to_string()
+        self.assertIsInstance(yaml_str, str)
+        self.assertIn("Math", yaml_str)
+        self.assertIn("version: 1", yaml_str)
+
 if __name__ == '__main__':
     unittest.main()

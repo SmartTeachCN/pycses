@@ -116,6 +116,16 @@ class CSESGenerator:
             'schedules': self.schedules
         }
         return cses_data
+
+    def to_string(self) -> str:
+        """
+        将 CSES 数据转换为 YAML 字符串
+        
+        Returns:
+            str: YAML 格式的字符串
+        """
+        cses_data = self.generate_cses_data()
+        return yaml.dump(cses_data, default_flow_style=False, allow_unicode=True, sort_keys=False)
     
     def save_to_file(self, file_path: str) -> None:
         """
@@ -124,10 +134,8 @@ class CSESGenerator:
         Args:
             file_path (str): 输出文件路径 
         """
-        cses_data = self.generate_cses_data()
-        
         try:
             with open(file_path, 'w', encoding='utf-8') as f:
-                yaml.dump(cses_data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
+                f.write(self.to_string())
         except IOError as e:
             raise IOError(f"Failed to write {file_path}: {e}")

@@ -2,32 +2,42 @@ import yaml
 from typing import List, Dict, Any, Optional, Union
 
 class CSESParser:
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: Optional[str] = None, content: Optional[str] = None):
         """
         初始化 CSES 解析器
         
         Args:
-            file_path (str): CSES 格式的 YAML 文件路径
+            file_path (str, optional): CSES 格式的 YAML 文件路径
+            content (str, optional): CSES 格式的 YAML 字符串内容
         """
-        self.file_path: str = file_path
+        self.file_path: Optional[str] = file_path
+        self.content: Optional[str] = content
         self.data: Optional[Dict[str, Any]] = None
         self.version: Optional[Union[int, str]] = None
         self.subjects: List[Dict[str, Any]] = []
         self.schedules: List[Dict[str, Any]] = []
         
-        self._load_file()
+        self._load_data()
         self._parse_data()
     
-    def _load_file(self) -> None:
-        """加载并解析 YAML 文件"""
-        try:
-            with open(self.file_path, 'r', encoding='utf-8') as f:
-                self.data = yaml.safe_load(f)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"File {self.file_path} Not Found")
-        except yaml.YAMLError as e:
-            raise ValueError(f"YAML Error: {e}")
-    
+    def _load_data(self) -> None:
+        """加载并解析 YAML 数据（从文件或字符串）"""
+        if self.content:
+            try:
+                self.data = yaml.safe_load(self.content)
+            except yaml.YAMLError as e:
+                raise ValueError(f"YAML Error: {e}")
+        elif self.file_path:
+            try:
+                with open(self.file_path, 'r', encoding='utf-8') as f:
+                    self.data = yaml.safe_load(f)
+            except FileNotFoundError:
+                raise FileNotFoundError(f"File {self.file_path} Not Found")
+            except yaml.YAMLError as e:
+                raise ValueError(f"YAML Error: {e}")
+        else:
+             raise ValueError("Either file_path or content must be provided")
+
     def _parse_data(self) -> None:
         """解析 YAML 数据"""
         if not self.data:
