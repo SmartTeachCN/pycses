@@ -49,7 +49,16 @@ class CSESParser:
         
         # 解析科目信息
         subjects_data = self.data.get('subjects', [])
-        for subject in subjects_data:
+        if not isinstance(subjects_data, list):
+             raise ValueError("Field 'subjects' must be a list")
+
+        for i, subject in enumerate(subjects_data):
+            if not isinstance(subject, dict):
+                raise ValueError(f"Subject at index {i} must be a dictionary")
+            
+            if 'name' not in subject:
+                raise ValueError(f"Subject at index {i} missing required field 'name'")
+
             subject_info: Subject = {
                 'name': subject['name'],
                 'simplified_name': subject.get('simplified_name'),
@@ -60,7 +69,18 @@ class CSESParser:
         
         # 解析课程安排
         schedules_data = self.data.get('schedules', [])
-        for schedule in schedules_data:
+        if not isinstance(schedules_data, list):
+             raise ValueError("Field 'schedules' must be a list")
+
+        for i, schedule in enumerate(schedules_data):
+            if not isinstance(schedule, dict):
+                raise ValueError(f"Schedule at index {i} must be a dictionary")
+
+            required_fields = ['name', 'enable_day', 'weeks']
+            for field in required_fields:
+                if field not in schedule:
+                    raise ValueError(f"Schedule at index {i} missing required field '{field}'")
+
             schedule_info: Schedule = {
                 'name': schedule['name'],
                 'enable_day': schedule['enable_day'],
@@ -70,7 +90,18 @@ class CSESParser:
             
             # 解析课程
             classes_data = schedule.get('classes', [])
-            for cls in classes_data:
+            if not isinstance(classes_data, list):
+                 raise ValueError(f"Field 'classes' in schedule {i} must be a list")
+
+            for j, cls in enumerate(classes_data):
+                if not isinstance(cls, dict):
+                    raise ValueError(f"Class at index {j} in schedule {i} must be a dictionary")
+
+                class_required_fields = ['subject', 'start_time', 'end_time']
+                for field in class_required_fields:
+                    if field not in cls:
+                        raise ValueError(f"Class at index {j} in schedule {i} missing required field '{field}'")
+
                 class_info: ClassInfo = {
                     'subject': cls['subject'],
                     'start_time': cls['start_time'],

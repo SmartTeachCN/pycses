@@ -84,5 +84,33 @@ class TestCSESParser(unittest.TestCase):
         empty_classes = parser.get_schedule_by_day('tue')
         self.assertEqual(len(empty_classes), 0)
 
+    def test_parser_validation(self):
+        # Missing subject name
+        malformed_data = {
+            'version': 1,
+            'subjects': [{'simplified_name': 'M'}],
+            'schedules': []
+        }
+        with self.assertRaisesRegex(ValueError, "missing required field 'name'"):
+            CSESParser(content=yaml.dump(malformed_data))
+
+        # Missing schedule fields
+        malformed_data = {
+            'version': 1,
+            'subjects': [],
+            'schedules': [{'name': 'Monday'}] # Missing enable_day, weeks
+        }
+        with self.assertRaisesRegex(ValueError, "missing required field 'enable_day'"):
+            CSESParser(content=yaml.dump(malformed_data))
+
+        # Malformed structure (subjects not a list)
+        malformed_data = {
+            'version': 1,
+            'subjects': "not a list",
+            'schedules': []
+        }
+        with self.assertRaisesRegex(ValueError, "Field 'subjects' must be a list"):
+            CSESParser(content=yaml.dump(malformed_data))
+
 if __name__ == '__main__':
     unittest.main()

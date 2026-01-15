@@ -49,5 +49,22 @@ class TestCSESGenerator(unittest.TestCase):
         self.assertIn("Math", yaml_str)
         self.assertIn("version: 1", yaml_str)
 
+    def test_validation(self):
+        # Invalid time format
+        with self.assertRaisesRegex(ValueError, "Invalid time format"):
+            self.generator._normalize_time("800")
+        
+        with self.assertRaisesRegex(ValueError, "Invalid time format"):
+            self.generator._normalize_time("invalid")
+
+        # Invalid weeks type
+        classes = [{'subject': 'Math', 'start_time': '8:00', 'end_time': '9:00'}]
+        with self.assertRaisesRegex(ValueError, "Weeks must be a string"):
+            self.generator.add_schedule("Monday", "mon", 123, classes)
+
+        # Confirm 'all' builtin is no longer accepted
+        with self.assertRaisesRegex(ValueError, "Weeks must be a string"):
+            self.generator.add_schedule("Monday", "mon", all, classes)
+
 if __name__ == '__main__':
     unittest.main()

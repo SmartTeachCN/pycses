@@ -52,22 +52,32 @@ class CSESGenerator:
             
         Returns:
             QuotedTime: 格式化后的时间字符串，包装在 QuotedTime 中以强制引号
+        
+        Raises:
+            ValueError: 如果时间格式无效
         """
         if not isinstance(time_str, str):
             time_str = str(time_str)
             
         parts = time_str.split(':')
-        normalized = time_str
+        normalized = ""
+        
         if len(parts) == 2:
             # HH:MM -> HH:MM:SS
+            if not (parts[0].isdigit() and parts[1].isdigit()):
+                 raise ValueError(f"Invalid time format: {time_str}")
             normalized = f"{parts[0].zfill(2)}:{parts[1].zfill(2)}:00"
         elif len(parts) == 3:
             # HH:MM:SS -> HH:MM:SS
+            if not (parts[0].isdigit() and parts[1].isdigit() and parts[2].isdigit()):
+                 raise ValueError(f"Invalid time format: {time_str}")
             normalized = f"{parts[0].zfill(2)}:{parts[1].zfill(2)}:{parts[2].zfill(2)}"
+        else:
+            raise ValueError(f"Invalid time format: {time_str}. Expected HH:MM or HH:MM:SS")
             
         return QuotedTime(normalized)
 
-    def add_schedule(self, name: str, enable_day: str, weeks: Union[str, object], classes: List[ClassInfo]) -> None:
+    def add_schedule(self, name: str, enable_day: str, weeks: str, classes: List[ClassInfo]) -> None:
         """
         添加课程安排 
         
@@ -80,11 +90,8 @@ class CSESGenerator:
                 - start_time (str): 开始时间（如 '8:00'）
                 - end_time (str): 结束时间（如 '9:00'）
         """
-        # Fix: Handle case where 'all' builtin is passed instead of string "all"
-        if weeks is all:
-            weeks = "all"
-        elif not isinstance(weeks, str):
-            weeks = str(weeks)
+        if not isinstance(weeks, str):
+             raise ValueError(f"Weeks must be a string, got {type(weeks)}")
 
         # Normalize time in classes
         normalized_classes: List[ClassInfo] = []
