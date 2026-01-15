@@ -1,5 +1,6 @@
 import yaml
 from typing import List, Dict, Any, Optional, Union
+from .types import Subject, Schedule, ClassInfo
 
 class CSESParser:
     def __init__(self, file_path: Optional[str] = None, content: Optional[str] = None):
@@ -14,8 +15,8 @@ class CSESParser:
         self.content: Optional[str] = content
         self.data: Optional[Dict[str, Any]] = None
         self.version: Optional[Union[int, str]] = None
-        self.subjects: List[Dict[str, Any]] = []
-        self.schedules: List[Dict[str, Any]] = []
+        self.subjects: List[Subject] = []
+        self.schedules: List[Schedule] = []
         
         self._load_data()
         self._parse_data()
@@ -49,7 +50,7 @@ class CSESParser:
         # 解析科目信息
         subjects_data = self.data.get('subjects', [])
         for subject in subjects_data:
-            subject_info = {
+            subject_info: Subject = {
                 'name': subject['name'],
                 'simplified_name': subject.get('simplified_name'),
                 'teacher': subject.get('teacher'),
@@ -60,7 +61,7 @@ class CSESParser:
         # 解析课程安排
         schedules_data = self.data.get('schedules', [])
         for schedule in schedules_data:
-            schedule_info = {
+            schedule_info: Schedule = {
                 'name': schedule['name'],
                 'enable_day': schedule['enable_day'],
                 'weeks': schedule['weeks'],
@@ -70,7 +71,7 @@ class CSESParser:
             # 解析课程
             classes_data = schedule.get('classes', [])
             for cls in classes_data:
-                class_info = {
+                class_info: ClassInfo = {
                     'subject': cls['subject'],
                     'start_time': cls['start_time'],
                     'end_time': cls['end_time']
@@ -79,15 +80,15 @@ class CSESParser:
             
             self.schedules.append(schedule_info)
     
-    def get_subjects(self) -> List[Dict[str, Any]]:
+    def get_subjects(self) -> List[Subject]:
         """获取所有科目信息"""
         return self.subjects
     
-    def get_schedules(self) -> List[Dict[str, Any]]:
+    def get_schedules(self) -> List[Schedule]:
         """获取所有课程安排"""
         return self.schedules
     
-    def get_schedule_by_day(self, day: str) -> List[Dict[str, Any]]:
+    def get_schedule_by_day(self, day: str) -> List[ClassInfo]:
         """
         根据星期获取课程安排
         

@@ -1,5 +1,6 @@
 import yaml
-from typing import List, Dict, Any, Optional, Union
+from typing import List, Optional, Union
+from .types import Subject, Schedule, ClassInfo, CSESData
 
 # Define a custom string class for times that should always be quoted
 class QuotedTime(str):
@@ -20,8 +21,8 @@ class CSESGenerator:
             version (int, optional): CSES 格式的版本号，默认为 1 
         """
         self.version: int = version
-        self.subjects: List[Dict[str, Any]] = []
-        self.schedules: List[Dict[str, Any]] = []
+        self.subjects: List[Subject] = []
+        self.schedules: List[Schedule] = []
 
     def add_subject(self, name: str, simplified_name: Optional[str] = None, 
                    teacher: Optional[str] = None, room: Optional[str] = None) -> None:
@@ -34,7 +35,7 @@ class CSESGenerator:
             teacher (str, optional): 教师姓名 
             room (str, optional): 教室名称 
         """
-        subject = {
+        subject: Subject = {
             'name': name,
             'simplified_name': simplified_name,
             'teacher': teacher,
@@ -42,7 +43,7 @@ class CSESGenerator:
         }
         self.subjects.append(subject)
     
-    def _normalize_time(self, time_str: Any) -> QuotedTime:
+    def _normalize_time(self, time_str: Union[str, int]) -> QuotedTime:
         """
         规范化时间格式为 HH:MM:SS，并确保输出时带有引号
         
@@ -66,7 +67,7 @@ class CSESGenerator:
             
         return QuotedTime(normalized)
 
-    def add_schedule(self, name: str, enable_day: str, weeks: Any, classes: List[Dict[str, Any]]) -> None:
+    def add_schedule(self, name: str, enable_day: str, weeks: Union[str, object], classes: List[ClassInfo]) -> None:
         """
         添加课程安排 
         
@@ -86,8 +87,10 @@ class CSESGenerator:
             weeks = str(weeks)
 
         # Normalize time in classes
-        normalized_classes = []
+        normalized_classes: List[ClassInfo] = []
         for cls in classes:
+            # We need to copy and cast to allow modification, 
+            # though strictly TypedDict doesn't support easy dynamic modification if we want to stay 100% pure
             new_cls = cls.copy()
             if 'start_time' in new_cls:
                 new_cls['start_time'] = self._normalize_time(new_cls['start_time'])
@@ -95,7 +98,7 @@ class CSESGenerator:
                 new_cls['end_time'] = self._normalize_time(new_cls['end_time'])
             normalized_classes.append(new_cls)
 
-        schedule = {
+        schedule: Schedule = {
             'name': name,
             'enable_day': enable_day,
             'weeks': weeks,
@@ -103,14 +106,14 @@ class CSESGenerator:
         }
         self.schedules.append(schedule)
     
-    def generate_cses_data(self) -> Dict[str, Any]:
+    def generate_cses_data(self) -> CSESData:
         """
         生成 CSES 格式的字典数据 
         
         Returns:
             dict: CSES 格式的字典数据 
         """
-        cses_data = {
+        cses_data: CSESData = {
             'version': self.version,
             'subjects': self.subjects,
             'schedules': self.schedules
