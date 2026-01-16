@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pycses',
-    version='0.1.2',
+    version='0.1.3',
     author='SmartTeachCN',
     author_email='contact@smart-teach.cn',
     description='CSES access framework for Python',
