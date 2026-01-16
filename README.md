@@ -14,6 +14,8 @@ CSES Access Framework for Python
 
 PyCSES is a Python library that provides access to the CSES format. It is designed to be simple and easy to use.
 
+This library is still in development. Some features may not be available yet.
+
 ## Functions
 
 ```python
